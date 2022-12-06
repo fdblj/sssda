@@ -1,0 +1,65 @@
+从 日期时间 导入 日期，日期时间
+从 时间 导入 时间，本地时间
+导入 数学
+从 微信 导入 微信客户端
+来自 微信。客户。api 导入 微信消息、微信模板
+导入 请求
+导入 操作系统
+ 随机导入
+
+今天 = 日期时间。现在()
+开始日期 = 操作系统。环境[ 'START_DATE' ]
+城市 = 操作系统。环境[ '城市' ]
+生日 = 操作系统。环境[ '生日' ]
+
+应用程序 ID  = 操作系统。环境[ “ APP_ID ” ]
+应用程序秘密 = 操作系统。环境[ “ APP_SECRET ” ]
+
+用户 ID  = 操作系统。环境[ “USER_ID” ]
+user_id2  = 操作系统。环境[ “ USER_ID2 ” ]
+模板ID  = 操作系统。环境[ “TEMPLATE_ID” ]
+
+def  get_today（）：
+  week_list  = [ "星期日" , "星期一" , "星期二" , "星期三" , "星期四" , "星期五" , "星期六" ]
+  年份 = 本地时间()。tm_year
+  月 = 本地时间()。tm_mon
+  天 = 本地时间()。tm_mday
+  今天 = 日期时间。日期（日期时间（年=年，月=月，日=日））
+  week  =  week_list [今天。等周天() %  7 ]
+  返回 “{} {}”。格式（今天，星期）
+
+def  get_weather ():
+  url  =  "http://autodev.openspeech.cn/csp/api/v2.1/weather?openId=aiuicus&clientType=android&sign=android&city="  + 城市
+  资源 = 请求。获取（网址）。json ()
+  天气 =  res [ '数据' ][ '列表' ][ 0 ]
+  返回 天气[ '天气' ]，数学。地板（天气[ 'temp' ]），数学。地板（天气[ '低' ]），数学。地板（天气[ '高' ]）
+
+def  get_count ():
+  delta  = 今天 - 日期时间。strptime (开始日期, "%Y-%m-%d" )
+  返回 增量。天
+
+def  get_birthday ():
+  接下来 = 日期时间。strptime ( str ( date . today () . year ) +  "-"  +  birthday , "%Y-%m-%d" )
+  如果 下一个 < 日期时间。现在（）：
+    下一个 = 下一个。替换（年=下一个。年 +  1）
+  返回（下一个 - 今天）。天
+
+def  get_words ():
+  话 = 要求。get ( "https://api.shadiao.pro/chp" )
+  如果的 话。状态码 !=  200 :
+    返回 get_words ()
+  回话 。_ json ()[ '数据' ][ '文本' ]
+
+def  get_random_color ():
+  返回 “#%06x”  % 随机。随机数( 0 , 0xFFFFFF )
+
+
+client  =  WeChatClient ( app_id , app_secret )
+
+wm  = 微信消息（客户端）
+wea , temperature , low , high  =  get_weather ()
+数据 = { “日期”：{ “值”：get_today（），“颜色”：get_random_color（）}，“城市”：{ “值”：城市，“颜色”：get_random_color（）}，“低”：{ "value" : str ( low ) + "℃" , "color" : get_random_color ()}, "high" :{ "value" :海峡（高）+ “℃”，“颜色”：get_random_color（）}，“天气”：{ “值”：wea，“颜色”：get_random_color（）}，“温度”：{ “值”：温度，“颜色”：get_random_color（）}，“love_days”： { "value" : get_count (), "color" : get_random_color ()}, "生日" :{ "value" : get_birthday (), "color" :get_random_color ()}, "单词" :{“价值”：get_words（），“颜色”：get_random_color（）}}
+资源 = 重量。send_template ( user_id , template_id ,数据)
+打印（资源）
+res2  =  wm。send_template ( user_id2 , template_id ,数据)
+打印（res2）
